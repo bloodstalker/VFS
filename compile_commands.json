@@ -1,0 +1,7 @@
+[
+    {
+        "command": "cc -c -o testfs.o testfs.c", 
+        "directory": "/home/bloodstalker/devi/ocaml-offchain/interpreter", 
+        "file": "/home/bloodstalker/devi/ocaml-offchain/interpreter/testfs.c"
+    }
+]
