@@ -2,6 +2,7 @@ import ipfsapi
 # the daemon should be running before running any of this
 # run: ipfs init
 # run: ipfs daemon
+# note to self: you cant cat a copy. you can read it though.
 
 def ipfs_init():
     return (ipfsapi.connect('127.0.0.1', 5001))
@@ -20,11 +21,11 @@ def syscall_140():
 def syscall_6():
     pass
 #read
-def syscall_3():
-    pass
+def syscall_3(path):
+    client.files_read(path)
 #write
-def syscall_4():
-    pass
+def syscall_4(path, bytes, create):
+    client_write(path, bytes, create)
 #dup
 def syscall_41():
     pass
@@ -119,30 +120,50 @@ def main():
     print(client.cat(file1_ipfs_addr))
     print(client.cat(file2_ipfs_addr))
     #client.files_cp("/test/"+res1[0]['Hash'], "/test1")
-    #client.files_cp("/ipfs/"+res1[0]['Hash'], "/test1/test1.c")
-    #client.files_cp("/ipfs/"+res2[0]['Hash'], "/test1/test2.cpp")
-    #client.files_cp("/ipfs/"+res3[0]['Hash'], "/test1/test3.wasm")
+    try:
+        pass
+        client.files_cp("/ipfs/"+res1[0]['Hash'], "/test1/test1.c")
+        client.files_cp("/ipfs/"+res2[0]['Hash'], "/test1/test2.cpp")
+        client.files_cp("/ipfs/"+res3[0]['Hash'], "/test1/test3.wasm")
+    except ipfsapi.exceptions.StatusError:
+        print("status error raised by cp")
+        pass
+    except requests.exceptions.HTTPError:
+        print("http error raised by cp")
+        pass
+
+    print(client.files_read("/test1/test1.c"))
 
     print(repr(res1))
     print(repr(res1[0]['Hash']))
 
-    #print(client.pin_ls())
     client.repo_gc()
-    #print(client.pin_ls())
     print(client.repo_stat())
-    #print(client.swarm_peers())
     print(client.files_ls("/test1"))
 
-    #print(client.cat("/test/" + res1[0]['Hash']))
-    #print(client.cat("/test/" + res1[0]['Hash']))
-    #print(client.cat("/test/" + res1[1]['Hash'] + "/test1.txt"))
+    try:
+        print(client.cat("/test/" + res1[0]['Hash']))
+        print(client.cat("/test/" + res1[0]['Hash']))
+        print(client.cat("/test/" + res1[1]['Hash'] + "/test1.c"))
+    except ipfsapi.exceptions.StatusError:
+        print("cat cp failed.")
+        pass
 
-    #print(repr(res1))
-    #print(repr(res2))
-    #print(repr(res3))
-    #print(client.cat(res1['Hash']))
-    #print(client.cat(res2['Hash']))
-    #print(client.cat(res3['Hash']))
+    dir1_ipfs_hash = client.files_stat("/test1")
+    dir0_ipfs_hash = client.files_stat("/test")
+    print(dir1_ipfs_hash['Hash'])
+    print(dir0_ipfs_hash['Hash'])
+    print(client.files_stat("/test1/test1.c"))
+    print(client.files_stat("/test1/test2.cpp"))
+    print(client.files_stat("/test1/test3.wasm"))
+    print(client.files_read("/test1/test3.wasm"))
+
+    print(repr(res1))
+    print(repr(res2))
+    print(repr(res3))
+    print(client.cat(res1[0]['Hash']))
+    print(client.cat(res2[0]['Hash']))
+    print(client.cat(res3[0]['Hash']))
 
 
 if __name__ == '__main__':
