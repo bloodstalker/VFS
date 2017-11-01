@@ -15,4 +15,4 @@ $(TARGET): $(TARGET).o
 	$(CC) $^ $(LD_FLAGS) -o $@
 
 clean:
-	rm -f *.o *~ $(SYS_CALLS)
+	rm -f *.o *~ $(TARGET)
